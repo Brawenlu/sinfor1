@@ -6,7 +6,7 @@ import Gui
 
 
 
-# 大萨达所大萨达
+
 class Tiebawindow(Gui.MyFrame1):
     def init_main_window(self):
         logger = logging.getLogger()  # logging对象
