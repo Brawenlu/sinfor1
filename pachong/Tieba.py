@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @Time    : 2019/2/20 14:52
+# @Author  : Brawenlu
+# @File    : Jd.py
+# @Software: PyCharm
+
 import requests,time,logging
 from bs4 import BeautifulSoup
 import pandas as pd
