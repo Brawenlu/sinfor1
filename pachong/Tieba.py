@@ -10,8 +10,9 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import wx
 import Gui
-
-
+import sys
+# reload(sys)
+# sys.setdefaultencoding('utf-8')
 
 
 class Tiebawindow(Gui.MyFrame1):
@@ -42,44 +43,53 @@ class Tiebawindow(Gui.MyFrame1):
             return tmp
         def search_n_pages(n):
             target = []
+            # global tiebaanme
             global tiebaanme
             template_url = "https://tieba.baidu.com/f?kw={}&ie=utf-8&pn={}"
             for i in range(n):
-                logging.info('正在爬取第{}页'.format(i + 1))
-                target_url = template_url.format(self.m_textCtrl1.GetValue(), 50 * i)
-                try:
-                    res = requests.get(target_url)
-                except:
-                    logging.error('请求失败,请检查网络连接!')
-                    self.m_textCtrl4.AppendText('请求失败,请检查网络连接!\n')
-                soup = BeautifulSoup(res.text, 'html.parser')
-                page_list = soup.find_all(class_='j_thread_list')
-                for a in soup.find_all('a',class_=' card_title_fname'):
-                    tiebaanme = a.string.replace('\n','').replace(' ','')
-                if self.m_textCtrl1.GetValue()!=tiebaanme:
-                    self.m_textCtrl4.AppendText('没找到"{}"此贴吧，已为您爬取如下贴吧: '.format(self.m_textCtrl1.GetValue())+tiebaanme+'\n')
-                target.extend(extra_from_one_page(page_list))
-                self.m_textCtrl4.AppendText('正在爬取第{}页'.format(i + 1) + '\n')
+                logging.info(u'正在爬取第{}页'.format(i + 1))
+                target_url = template_url.format(self.m_textCtrl1.GetValue(), 50 * i)  # 按照浏览贴吧的自然行为，每一页50条
+                # try:
+                res = requests.get(target_url)
+                # except:
+                #     logging.error(u'请求失败,请检查网络连接!')
+                #     self.m_textCtrl4.AppendText(u'请求失败,请检查网络连接!\n')
+                soup = BeautifulSoup(res.text, 'html.parser')   # 转为 bs 对象
+                page_list = soup.find_all(class_='j_thread_list')   # 获取该页帖子列表
+                # for a in soup.find_all('a',class_=' card_title_fname'):
+                #     tiebaanme = a.string.replace('\n','').replace(' ','')
+                #     print(tiebaanme)
+                # print(tiebaanme)
+                # if self.m_textCtrl1.GetValue()!=tiebaanme:
+                #     self.m_textCtrl4.AppendText('没找到"{}"此贴吧，已为您爬取如下贴吧: '.format(self.m_textCtrl1.GetValue())+tiebaanme+'\n')
+                # print(extra_from_one_page(page_list))
+                target.extend(extra_from_one_page(page_list))  #该页信息保存到target
+                time.sleep(0.2)
+                # print(target)
+                self.m_textCtrl4.AppendText(u'正在爬取第{}页'.format(i + 1) + '\n')
                 time.sleep(0.2)
             return target
-        try:
-            resopnse = search_n_pages(int(self.m_textCtrl3.GetValue()))
-            self.m_textCtrl4.AppendText(
-                '本次爬取的是“{}”贴吧中回帖数大于 “{}” 的帖子信息，本次爬取{}页\n'.format(tiebaanme,
+        # try:
+        resopnse = search_n_pages(int(self.m_textCtrl3.GetValue()))
+        self.m_textCtrl4.AppendText(
+                '本次爬取的是“{}”贴吧中回帖数大于 “{}” 的帖子信息，本次爬取{}页\n'.format(self.m_textCtrl1.GetValue(),
                                                                  self.m_textCtrl2.GetValue(),
                                                                  self.m_textCtrl3.GetValue()))
-            self.m_textCtrl4.AppendText('爬取结束\n')
-        except ValueError as z:
-            self.m_textCtrl4.AppendText('爬取失败，详细日志如下\n')
-            self.m_textCtrl4.AppendText('请在第二行、第三行输入整数(第二行输入帖子数，第三行输入页数)\n')
-        if resopnse==[]:
-            self.m_textCtrl4.AppendText('爬取成功，但是没有爬取到“{}”贴吧中回帖数大于 “{}” 的帖子信息'.format(tiebaanme,
-                                                                 self.m_textCtrl2.GetValue()))
-        else:
-            data = pd.DataFrame(resopnse)
-            data.to_excel('{}爬取结果.xlsx'.format(self.m_textCtrl1.GetValue()))
+        self.m_textCtrl4.AppendText('爬取结束\n文件在软件同级目录的{}爬取结果.xlsx'.format(self.m_textCtrl1.GetValue()) + '\n')
+        # self.m_textCtrl4.SetValue('日志如下(日志文件在软件同级目录的test.log)' + '\n')
+        data = pd.DataFrame(resopnse)
+        print(data)
+        data.to_excel('{}爬取结果.xlsx'.format(self.m_textCtrl1.GetValue()))
+        # except ValueError as z:
+        #     self.m_textCtrl4.AppendText('爬取失败，详细日志如下\n')
+        #     self.m_textCtrl4.AppendText('请在第二行、第三行输入整数(第二行输入帖子数，第三行输入页数)\n')
+        # if resopnse==[]:
+        #     self.m_textCtrl4.AppendText('爬取成功，但是没有爬取到“{}”贴吧中回帖数大于 “{}” 的帖子信息'.format(tiebaanme,
+        #                                                          self.m_textCtrl2.GetValue()))
+        # else:
     def click2(self,event):
-        self.m_textCtrl4.SetValue('日志如下(日志文件在软件同级目录的test.log)' + '\n')
+        pass
+
 
 if __name__ == '__main__':
     app = wx.App()
