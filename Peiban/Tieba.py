@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import wx
 import Gui
+
+
 # from Gui import MyFrame1
 
 # tieba_name = input('请输入想要查询的贴吧名字:\n')
@@ -18,6 +20,9 @@ import Gui
 class Tiebawindow(Gui.MyFrame1):
 # 首先，咱们从刚刚源文件中将主窗体继承下来.就是修改过name属性的主窗体咯。
     def init_main_window(self):
+        # global tiebaname
+        # tiebaname = ""
+
         logger = logging.getLogger()  # logging对象
         fh = logging.FileHandler("log.txt")  # 文件对象
         sh = logging.StreamHandler()  # 输出流对象
@@ -32,6 +37,7 @@ class Tiebawindow(Gui.MyFrame1):
         self.m_textCtrl2.SetValue('请输入想要查询的回帖数临界点，仅仅显示大于该临界点的帖子')
         self.m_textCtrl3.SetValue('请输入你要查询的帖子页数')
         self.m_textCtrl4.SetValue('日志如下(日志文件在软件同级目录的test.log)'+'\n')
+
     # def clear1(self, event):
     #     self.m_textCtrl1.SetValue("")
     # def clear2(self, event):
@@ -61,6 +67,7 @@ class Tiebawindow(Gui.MyFrame1):
             template_url2 = 'https://tieba.baidu.com/f?kw={}' #未找到指定贴吧
             # 发送多次get请求
             for i in range(n):
+
                 # 跟踪进度
                 # print ('page',i)
                 logging.info('正在爬取第{}页'.format(i + 1))

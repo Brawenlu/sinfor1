@@ -32,7 +32,7 @@ class zhuanhuan(Gui2.MyFrame1):
         root = tk.Tk()
         root.withdraw()
         file_path = filedialog.askopenfilename()
-        print(file_path)
+        # print(file_path)
         self.m_textCtrl4.SetValue(file_path)
         return file_path
         #path = os.getcwd()  # 返回当前工作目录的路径
@@ -47,8 +47,15 @@ class zhuanhuan(Gui2.MyFrame1):
         global file_path
         img = PythonMagick.Image(file_path)
         img.sample('228x228')  # 设置图片格式
-        newpath = 'D://ico.ico'
+        newfile = file_path.split('.')
+        # print(newfile)
+        newfile2 = newfile[0].split('/')
+        if not os.path.exists('D:\\ICO'):
+            os.mkdir('D:\\ICO')
+        # print(newfile2)
+        newpath = 'D:\\ico\\{}.ico'.format(newfile2[-1])
         img.write(newpath)
+        self.m_textCtrl5.SetValue('转换后路径在D盘目录ICO文件夹')
 
 
 if __name__ =='__main__':
