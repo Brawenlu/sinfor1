@@ -19,7 +19,7 @@ class MyFrame1(wx.Frame):
 
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"转换ico图片", pos=wx.DefaultPosition,
-                          size=wx.Size(400, 200), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+                          size=wx.Size(600, 400), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHintsSz(wx.DefaultSize, wx.DefaultSize)
 
@@ -34,7 +34,7 @@ class MyFrame1(wx.Frame):
         self.m_button6 = wx.Button(self, wx.ID_ANY, u"点击开始转换", wx.DefaultPosition, wx.DefaultSize, 0)
         gSizer1.Add(self.m_button6, 0, wx.ALL, 5)
 
-        self.m_textCtrl5 = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_textCtrl5 = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE)
         gSizer1.Add(self.m_textCtrl5, 0, wx.ALL|wx.EXPAND, 5)
 
         self.SetSizer(gSizer1)

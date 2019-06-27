@@ -34,6 +34,14 @@ class zhuanhuan(Gui2.MyFrame1):
         file_path = filedialog.askopenfilename()
         # print(file_path)
         self.m_textCtrl4.SetValue(file_path)
+        picstr = file_path.split('.')[-1]
+        # print(picstr)
+        piclist = {'jpg','bmp','gif','png','bmp','tiff','psd','jpeg','jfif','jpe','tif','dib'}
+        if picstr not in piclist:
+            self.m_textCtrl4.SetValue('请选择正确的图片格式!')
+            self.m_textCtrl5.SetValue('选择失败！图片格式有误')
+        else:
+            self.m_textCtrl5.SetValue("选择成功！点击左侧转换")
         return file_path
         #path = os.getcwd()  # 返回当前工作目录的路径
         #filename = input("输入转换的完整图片名\n")
@@ -53,10 +61,10 @@ class zhuanhuan(Gui2.MyFrame1):
         if not os.path.exists('D:\\ICO'):
             os.mkdir('D:\\ICO')
         # print(newfile2)
-        newpath = 'D:\\ico\\{}.ico'.format(newfile2[-1])
+        newpath = 'D:\\ICO\\{}.ico'.format(newfile2[-1])
         img.write(newpath)
-        self.m_textCtrl5.SetValue('转换后路径在D盘目录ICO文件夹')
-
+        # self.m_textCtrl5.SetValue()
+        self.m_textCtrl5.SetValue('转换成功!'+'\n'+'图片路径在D盘目录ICO文件夹')
 
 if __name__ =='__main__':
     app = wx.App()
