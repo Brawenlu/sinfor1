@@ -36,7 +36,7 @@ class zhuanhuan(Gui2.MyFrame1):
         self.m_textCtrl4.SetValue(file_path)
         picstr = file_path.split('.')[-1]
         # print(picstr)
-        piclist = {'jpg','bmp','gif','png','bmp','tiff','psd','jpeg','jfif','jpe','tif','dib'}
+        piclist = {'jpg','bmp','gif','png','bmp','tiff','psd','jpeg','jfif','jpe','tif','dib','ico'}
         if picstr not in piclist:
             self.m_textCtrl4.SetValue('请选择正确的图片格式!')
             self.m_textCtrl5.SetValue('选择失败！图片格式有误')
@@ -54,7 +54,7 @@ class zhuanhuan(Gui2.MyFrame1):
     def click(self, event):
         global file_path
         img = PythonMagick.Image(file_path)
-        img.sample('228x228')  # 设置图片格式
+        img.sample('48x48')  # 设置图片格式
         newfile = file_path.split('.')
         # print(newfile)
         newfile2 = newfile[0].split('/')
