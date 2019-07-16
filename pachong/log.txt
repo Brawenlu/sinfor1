@@ -220,3 +220,21 @@
 2019-07-01 12:33:20,602-Tieba.py[line50]-INFO-正在爬取第3页
 2019-07-01 12:33:20,605-connectionpool.py[line813]-DEBUG-Starting new HTTPS connection (1): tieba.baidu.com:443
 2019-07-01 12:33:21,764-connectionpool.py[line393]-DEBUG-https://tieba.baidu.com:443 "GET /f?kw=DNF&ie=utf-8&pn=100 HTTP/1.1" 200 None
+2019-07-03 12:24:16,179-Tieba.py[line50]-INFO-正在爬取第1页
+2019-07-03 12:24:16,189-connectionpool.py[line815]-DEBUG-Starting new HTTPS connection (1): tieba.baidu.com:443
+2019-07-03 12:24:17,688-connectionpool.py[line396]-DEBUG-https://tieba.baidu.com:443 "GET /f?kw=DNF&ie=utf-8&pn=0 HTTP/1.1" 200 None
+2019-07-03 12:24:18,470-Tieba.py[line50]-INFO-正在爬取第2页
+2019-07-03 12:24:18,473-connectionpool.py[line815]-DEBUG-Starting new HTTPS connection (1): tieba.baidu.com:443
+2019-07-03 12:24:19,565-connectionpool.py[line396]-DEBUG-https://tieba.baidu.com:443 "GET /f?kw=DNF&ie=utf-8&pn=50 HTTP/1.1" 200 None
+2019-07-03 12:24:20,366-Tieba.py[line50]-INFO-正在爬取第3页
+2019-07-03 12:24:20,370-connectionpool.py[line815]-DEBUG-Starting new HTTPS connection (1): tieba.baidu.com:443
+2019-07-03 12:24:21,508-connectionpool.py[line396]-DEBUG-https://tieba.baidu.com:443 "GET /f?kw=DNF&ie=utf-8&pn=100 HTTP/1.1" 200 None
+2019-07-03 12:25:37,553-Tieba.py[line50]-INFO-正在爬取第1页
+2019-07-03 12:25:37,561-connectionpool.py[line815]-DEBUG-Starting new HTTPS connection (1): tieba.baidu.com:443
+2019-07-03 12:25:38,654-connectionpool.py[line396]-DEBUG-https://tieba.baidu.com:443 "GET /f?kw=DNF&ie=utf-8&pn=0 HTTP/1.1" 200 None
+2019-07-03 12:25:39,422-Tieba.py[line50]-INFO-正在爬取第2页
+2019-07-03 12:25:39,425-connectionpool.py[line815]-DEBUG-Starting new HTTPS connection (1): tieba.baidu.com:443
+2019-07-03 12:25:40,764-connectionpool.py[line396]-DEBUG-https://tieba.baidu.com:443 "GET /f?kw=DNF&ie=utf-8&pn=50 HTTP/1.1" 200 None
+2019-07-03 12:25:41,523-Tieba.py[line50]-INFO-正在爬取第3页
+2019-07-03 12:25:41,527-connectionpool.py[line815]-DEBUG-Starting new HTTPS connection (1): tieba.baidu.com:443
+2019-07-03 12:25:42,657-connectionpool.py[line396]-DEBUG-https://tieba.baidu.com:443 "GET /f?kw=DNF&ie=utf-8&pn=100 HTTP/1.1" 200 None

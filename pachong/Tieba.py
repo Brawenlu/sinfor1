@@ -1,99 +1,147 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!-*- coding:utf-8 -*-
+#coding:utf-8
 # @Time    : 2019/2/20 14:52
 # @Author  : Brawenlu
 # @File    : Jd.py
 # @Software: PyCharm
 
-import requests,time,logging
-from bs4 import BeautifulSoup
-import pandas as pd
-import wx
-import Gui
+
 import sys
+import os
+import json
+import Tkinter as tk
+import tkFileDialog
+from ftplib import FTP
+import re
+import sys
+default_encoding = 'utf-8'
+if sys.getdefaultencoding() != default_encoding:
+   reload(sys)
+   sys.setdefaultencoding(default_encoding)
+
+print sys.getdefaultencoding()
 # reload(sys)
 # sys.setdefaultencoding('utf-8')
 
+_XFER_FILE = 'FILE'
+_XFER_DIR = 'DIR'
 
-class Tiebawindow(Gui.MyFrame1):
-    def init_main_window(self):
-        logger = logging.getLogger()  # logging对象
-        fh = logging.FileHandler("log.txt")  # 文件对象
-        sh = logging.StreamHandler()  # 输出流对象
-        fm = logging.Formatter('%(asctime)s-%(filename)s[line%(lineno)d]-%(levelname)s-%(message)s')  # 格式化对象
-        fh.setFormatter(fm)  # 设置格式
-        sh.setFormatter(fm)  # 设置格式
-        logger.addHandler(fh)  # logger添加文件输出流
-        logger.addHandler(sh)  # logger添加标准输出流（std out）
-        logger.setLevel(logging.DEBUG)  # 设置从那个等级开始提示
-        self.m_textCtrl1.SetValue('请输入想要查询的贴吧名字')
-        self.m_textCtrl2.SetValue('请输入想要查询的回帖数临界点，仅仅显示大于该临界点的帖子')
-        self.m_textCtrl3.SetValue('请输入你要查询的帖子页数')
-        self.m_textCtrl4.SetValue('日志如下(日志文件在软件同级目录的test.log)'+'\n')
-    def click(self, event):
-        def extra_from_one_page(page_lst):
-            tmp = []
-            for i in page_lst:
-                    if int(i.find(class_='threadlist_rep_num').text) > int(self.m_textCtrl2.GetValue()):
-                        dic = {}
-                        dic['回帖数'] = int(i.find(class_='threadlist_rep_num').text)
-                        dic['帖子名称'] = i.find(class_='threadlist_title').text
-                        dic['帖子地址'] = 'https://tieba.baidu.com' + i.find(class_='threadlist_title').a['href']
-                        tmp.append(dic)
-            return tmp
-        def search_n_pages(n):
-            target = []
-            # global tiebaanme
-            global tiebaanme
-            template_url = "https://tieba.baidu.com/f?kw={}&ie=utf-8&pn={}"
-            for i in range(n):
-                logging.info(u'正在爬取第{}页'.format(i + 1))
-                target_url = template_url.format(self.m_textCtrl1.GetValue(), 50 * i)  # 按照浏览贴吧的自然行为，每一页50条
-                # try:
-                res = requests.get(target_url)
-                # except:
-                #     logging.error(u'请求失败,请检查网络连接!')
-                #     self.m_textCtrl4.AppendText(u'请求失败,请检查网络连接!\n')
-                soup = BeautifulSoup(res.text, 'html.parser')   # 转为 bs 对象
-                page_list = soup.find_all(class_='j_thread_list')   # 获取该页帖子列表
-                # for a in soup.find_all('a',class_=' card_title_fname'):
-                #     tiebaanme = a.string.replace('\n','').replace(' ','')
-                #     print(tiebaanme)
-                # print(tiebaanme)
-                # if self.m_textCtrl1.GetValue()!=tiebaanme:
-                #     self.m_textCtrl4.AppendText('没找到"{}"此贴吧，已为您爬取如下贴吧: '.format(self.m_textCtrl1.GetValue())+tiebaanme+'\n')
-                # print(extra_from_one_page(page_list))
-                target.extend(extra_from_one_page(page_list))  #该页信息保存到target
-                time.sleep(0.2)
-                # print(target)
-                self.m_textCtrl4.AppendText(u'正在爬取第{}页'.format(i + 1) + '\n')
-                time.sleep(0.2)
-            return target
-        # try:
-        resopnse = search_n_pages(int(self.m_textCtrl3.GetValue()))
-        self.m_textCtrl4.AppendText(
-                '本次爬取的是“{}”贴吧中回帖数大于 “{}” 的帖子信息，本次爬取{}页\n'.format(self.m_textCtrl1.GetValue(),
-                                                                 self.m_textCtrl2.GetValue(),
-                                                                 self.m_textCtrl3.GetValue()))
-        self.m_textCtrl4.AppendText('爬取结束\n文件在软件同级目录的{}爬取结果.xlsx'.format(self.m_textCtrl1.GetValue()) + '\n')
-        # self.m_textCtrl4.SetValue('日志如下(日志文件在软件同级目录的test.log)' + '\n')
-        data = pd.DataFrame(resopnse)
-        print(data)
-        data.to_excel('{}爬取结果.xlsx'.format(self.m_textCtrl1.GetValue()))
-        # except ValueError as z:
-        #     self.m_textCtrl4.AppendText('爬取失败，详细日志如下\n')
-        #     self.m_textCtrl4.AppendText('请在第二行、第三行输入整数(第二行输入帖子数，第三行输入页数)\n')
-        # if resopnse==[]:
-        #     self.m_textCtrl4.AppendText('爬取成功，但是没有爬取到“{}”贴吧中回帖数大于 “{}” 的帖子信息'.format(tiebaanme,
-        #                                                          self.m_textCtrl2.GetValue()))
-        # else:
-    def click2(self,event):
+
+class Xfer(object):
+    def __init__(self):
+        self.ftp = None
+    def __del__(self):
         pass
+    def setFtpParams(self, ip, uname, pwd, port=21, timeout=60):
+        self.ip = ip
+        self.uname = uname
+        self.pwd = pwd
+        self.port = port
+        self.timeout = timeout
+    def initEnv(self):      ##链接ftp
+        if self.ftp is None:
+            self.ftp = FTP()
+            print '### connect ftp server: %s ...' % self.ip
+            self.ftp.connect(self.ip, self.port, self.timeout)
+            self.ftp.login(self.uname, self.pwd)
+            print self.ftp.getwelcome()
+    def clearEnv(self):
+        if self.ftp:
+            self.ftp.close()
+            print '### disconnect ftp server: %s!' % self.ip
+            self.ftp = None
+    def uploadDir(self, localdir='./', remotedir='./1/2'):
+        # if not os.path.exists(remotedir):
+        #      list = localdir.split('\\')
+        #      remote = list[-1]
+        #      self.ftp.mkd(remote)
+        print remotedir
+        # print remotedir
+        if not os.path.isdir(localdir):
+            return
+        self.ftp.cwd(remotedir)
+        for file in os.listdir(localdir):
+            src = os.path.join(localdir, file)
+            if os.path.isfile(src):
+                self.uploadFile(src, file)
+            elif os.path.isdir(src):
+                try:
+                    self.ftp.mkd(file)         #子目录不存在则创建
+                except:
+                    sys.stderr.write('the dir is exists %s' % file)
+                self.uploadDir(src, file)
+        self.ftp.cwd('..')
+
+    def uploadFile(self, localpath, remotepath='./'):
+        if not os.path.isfile(localpath):
+            return
+        print '+++ upload %s to %s:%s' % (localpath, self.ip, remotepath)
+        self.ftp.storbinary('STOR ' + remotepath, open(localpath, 'rb'))
+
+    def __filetype(self, src):     ##判断是否为文件夹
+        if os.path.isfile(src):
+            index = src.rfind('\\')
+            # print index
+            if index == -1:
+                index = src.rfind('/')
+            return _XFER_FILE, src[index + 1:]
+        elif os.path.isdir(src):
+            return _XFER_DIR, ''      #如果是dir就返回dir，filename=''latin-1
+
+    def upload(self, src):
+        # filelist = []
+        filetype, filename = self.__filetype(src)
+        list = src.split('\\')
+        remote = list[-1]
+        print remote
+        # print filetype
+        # print filename
+        self.initEnv()
+        self.ftp.cwd('1/2')
+        # print type(self.ftp.dir())
+        # print type((self.ftp.nlst()))
+        # print remote.encode("utf-8")
+        # print type(remote.encode("utf-8"))
+        # print type(self.ftp.nlst()[1])
+        # for j in range(len(self.ftp.nlst())):
+        #     print type(self.ftp.nlst()[j]).decode("utf-8")
+        #     filelist[j]=(self.ftp.nlst()[j]).decode('utf-8')
+        # print filelist
+        print remote.encode("utf-8")
+        if  remote.encode("utf-8") in self.ftp.nlst():
+            print u'+++ ftp %s 目录已存在' %(remote)
+            # self.ftp.rmd(remote)
+            # self.ftp.mkd(remote)
+        else:
+            print u'+++ ftp %s 目录不存在' %(remote)
+            self.ftp.mkd(remote)
+        if filetype == _XFER_DIR:
+            self.srcDir = src
+            # print self.srcDir
+            self.uploadDir(self.srcDir,remote)
+        elif filetype == _XFER_FILE:
+            self.uploadFile(src, filename)
+        self.clearEnv()
 
 
 if __name__ == '__main__':
-    app = wx.App()
-    main_win = Tiebawindow(None)
-    main_win.init_main_window()
-    main_win.Show()
-    app.MainLoop()
+    root = tk.Tk()
+    root.withdraw()
+    srcDir = tkFileDialog.askdirectory()
+    srcDir1 = srcDir.encode('utf-8')
+    # print type(srcDir1)
+    # print srcDir1
+    srcDir2 = srcDir1.replace("/","\\")
+    srcDir3 = unicode(srcDir2, 'utf-8')
+    # srcDir = raw_input(u'请输入你要文件夹上传的路径名，以单号结束\n')
+    print type(srcDir3)
+    # srcDir1 = srcDi
+    # srcDir = r"D:\1"
+    list = srcDir.split('\\')
+    remote = list[-1]
+    # srcFile = r'C:\sytst\sar.c'
+    xfer = Xfer()
+    xfer.setFtpParams('199.200.1.88', 'test', 'test')
+    xfer.upload(srcDir3)
+    # xfer.upload(srcFile)

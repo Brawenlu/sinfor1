@@ -4,7 +4,8 @@
 # @Author  : Brawenlu
 # @File    : Jd.py
 # @Software: PyCharm
-import Gui2,logging,PythonMagick,os,wx
+import Gui2,logging,os,wx
+# import PythonMagick
 import tkinter as tk
 from tkinter import filedialog
 
@@ -31,6 +32,7 @@ class zhuanhuan(Gui2.MyFrame1):
         global file_path
         root = tk.Tk()
         root.withdraw()
+        root.title('')
         file_path = filedialog.askopenfilename()
         # print(file_path)
         self.m_textCtrl4.SetValue(file_path)
