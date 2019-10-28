@@ -13,9 +13,9 @@ from tkinter import filedialog
 import tkinter.messagebox as mb
 
 
-hostname='10.243.255.243'
+hostname='10.243.255.242'
 username='sangfor'
-password='sangfor@123'
+password='sangfor'
 port=22
 def upload(local_dir,remotedir):
     try:
@@ -32,7 +32,7 @@ def upload(local_dir,remotedir):
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(hostname, port, username, password)
-        stdin, stdout, stderr = ssh.exec_command('ls -name /emm/custom/')
+        stdin, stdout, stderr = ssh.exec_command('ll /var/www/sangfor/default/awork/')
         # print(stdout.readlines())
         list2 = stdout.readlines()
         print(list2)
@@ -47,20 +47,6 @@ def upload(local_dir,remotedir):
             else:
                 sftp.mkdir(remotedir)
                 break
-        # if stdout.readline() != '':
-        #     print("exist")
-        # else:
-        #     print("not exist")
-        # if  sftp.stat(remotedir):
-        #     mb.showinfo('提示', '定制单号已存在')
-        # # print(remotedir)
-        # # print(local_dir)
-        # else: sftp.mkdir(remotedir)
-            # print(1)
-
-
-
-
 
         print('创建文件夹'+remotedir+'成功')
         remotedir = remotedir +'/'
@@ -128,6 +114,6 @@ if __name__=='__main__':
         local_dir = local_dir.replace('/','\\')
         # print(local_dir)
         # local_dir = r'D:\SSL-2019030408'
-        remote_dir = '/emm/custom/'
+        remote_dir = '/var/www/sangfor/default/awork/'
         upload(local_dir, remote_dir)
 

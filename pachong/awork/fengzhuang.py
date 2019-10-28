@@ -13,9 +13,9 @@ from tkinter import filedialog
 import tkinter.messagebox as mb
 
 
-hostname='10.243.255.243'
-username='sangfor'
-password='sangfor@123'
+hostname='10.242.255.241'
+username='emm'
+password='sangfor123'
 port=22
 def upload(local_dir,remotedir):
     try:
@@ -32,21 +32,47 @@ def upload(local_dir,remotedir):
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(hostname, port, username, password)
-        stdin, stdout, stderr = ssh.exec_command('ls -name /emm/custom/')
+        stdin, stdout, stderr = ssh.exec_command('ls  /emm/custom/')
         # print(stdout.readlines())
         list2 = stdout.readlines()
+        print(remotedir)
         print(list2)
+        # print(type(list2))
+        # print(list2[0],list2[1],list2[2])
+        try:
+            sftp.stat(remotedir)
+            mb.showinfo('提示', '定制单号已存在,点击继续')
+        except IOError:
+            sftp.mkdir(remotedir)
+        # if danhao in list2:
+        #     mb.showinfo('提示', '定制单号已存在,点击继续')
+        # else:
+        #     print(remotedir)
+        #     t = paramiko.Transport((hostname, port))
+        #     t.connect(username=username, password=password)
+        #     sftp = paramiko.SFTPClient.from_transport(t)
+        #     sftp.mkdir(remotedir)
+            #         break
         # print(type(stdout.readlines()))
-        for i in range(len(list2)):
-            print(i,list2[i])
-            # print(type(list2[i]))
-            an = re.search(danhao, list2[i])
-            if an:
-                mb.showinfo('提示', '定制单号已存在,点击继续')
-                break
-            else:
-                sftp.mkdir(remotedir)
-                break
+        # for i in range(len(list2)):
+        #     print(i,list2[i])
+        #     # print(type(list2[i]))
+        #     # an = re.search(danhao, list2[i].strip('\n'))
+        #     print(danhao)
+        #     print(type(danhao))
+        #     print(list2[i].strip('\n'))
+        #     print(type(list2[i]))
+        #     if danhao== list2[i].strip('\n'):
+        #         mb.showinfo('提示', '定制单号已存在,点击继续')
+        #         break
+        #     # if an:
+        #     #     mb.showinfo('提示', '定制单号已存在,点击继续')
+        #     #     break
+        #     else:
+        #         print("创建前面")
+        #         print(remotedir)
+        #         sftp.mkdir(remotedir)
+        #         break
         # if stdout.readline() != '':
         #     print("exist")
         # else:
@@ -57,9 +83,6 @@ def upload(local_dir,remotedir):
         # # print(local_dir)
         # else: sftp.mkdir(remotedir)
             # print(1)
-
-
-
 
 
         print('创建文件夹'+remotedir+'成功')
