@@ -13,9 +13,9 @@ from tkinter import filedialog
 import tkinter.messagebox as mb
 
 
-hostname='10.242.255.241'
-username='emm'
-password='sangfor123'
+hostname='10.243.255.243'
+username='sangfor'
+password='sangfor@123'
 port=22
 def upload(local_dir,remotedir):
     try:
@@ -42,8 +42,12 @@ def upload(local_dir,remotedir):
         try:
             sftp.stat(remotedir)
             mb.showinfo('提示', '定制单号已存在,点击继续')
+            # print('创建文件夹' + remotedir + '成功')
+
         except IOError:
             sftp.mkdir(remotedir)
+            print('创建文件夹' + remotedir + '成功')
+
         # if danhao in list2:
         #     mb.showinfo('提示', '定制单号已存在,点击继续')
         # else:
@@ -85,7 +89,6 @@ def upload(local_dir,remotedir):
             # print(1)
 
 
-        print('创建文件夹'+remotedir+'成功')
         remotedir = remotedir +'/'
         #如果是空文件夹不会上传
         for root, dirs, files in os.walk(local_dir):

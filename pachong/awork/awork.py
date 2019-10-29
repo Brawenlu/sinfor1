@@ -19,6 +19,7 @@ password='sangfor'
 port=22
 def upload(local_dir,remotedir):
     try:
+        # result=''
         #连接linux
         t = paramiko.Transport((hostname,port))
         t.connect(username=username,password=password)
@@ -32,33 +33,40 @@ def upload(local_dir,remotedir):
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(hostname, port, username, password)
-        stdin, stdout, stderr = ssh.exec_command('ll /var/www/sangfor/default/awork/')
-        # print(stdout.readlines())
+        stdin, stdout, stderr = ssh.exec_command('ls  /var/www/sangfor/default/awork/')
+        print(stdout.readlines())
         list2 = stdout.readlines()
-        print(list2)
-        # print(type(stdout.readlines()))
-        for i in range(len(list2)):
-            print(i,list2[i])
-            # print(type(list2[i]))
-            an = re.search(danhao, list2[i])
-            if an:
-                mb.showinfo('提示', '定制单号已存在,点击继续')
-                break
-            else:
-                sftp.mkdir(remotedir)
-                break
+        # print(remotedir)
+        # print(list2)
+        # print(type(list2))
+        # print(list2[0],list2[1],list2[2])
+        try:
+            sftp.stat(remotedir)
+            # print('1')
+            mb.showinfo('提示', '定制单号已存在,点击继续')
+        except IOError:
+            # print('2')
+            # sftp.mkdir(remotedir)
+            stdin, stdout, stderr = ssh.exec_command('sudo mkdir /var/www/sangfor/default/awork/'+danhao)
+            stdin, stdout, stderr = ssh.exec_command('sudo chmod 777 /var/www/sangfor/default/awork/'+danhao)
+            # ssh.exec_command('chmod 777 '+remotedir)
+            # print(stdout.read().decode())#必须的功能不晓得干嘛的，删除掉就不行了
+            print('创建文件夹' + remotedir + '成功')
 
-        print('创建文件夹'+remotedir+'成功')
+
         remotedir = remotedir +'/'
+        # print(remotedir)
         #如果是空文件夹不会上传
         for root, dirs, files in os.walk(local_dir):
             # print('[%s][%s][%s]' % (root,dirs,files))
             for filepath in files:
                 local_file = os.path.join(root,filepath)
                 # print(local_file)
+                # print(local_file)
                 # print(11,'[%s][%s][%s][%s]' %(root,filepath,local_file,local_dir))
                 # a = local_file.replace(local_dir,'').replace('//','/').lstrip('/')  #lstrip用户截掉字符串左边的/返回后面的
                 a = local_file.replace(local_dir,'').replace('\\','/').lstrip('/')  #lstrip用户截掉字符串左边的/返回后面的
+                # print(a)
                 # print('01',a,'[%s]' % remotedir)
                 remotefile = os.path.join(remotedir,a)
                 # print(21,local_file)
@@ -66,6 +74,11 @@ def upload(local_dir,remotedir):
                 try:
                     sftp.put(local_file,remotefile)
                     print('上传文件'+remotefile+'成功')
+                    if 'aWork.ipa' in remotefile.split('/'):
+                        stdin, stdout, stderr = ssh.exec_command('md5sum '+remotefile)
+                        result = stdout.readlines()
+                        print(result)
+
                 except Exception as e:
                     # print(os.path.split(remotefile))  #将文件名和路径分割开实际上，该函数的分割并不智能，它仅仅是以 "PATH" 中最后一个 '/' 作为分隔符，分隔后，将索引为0的视为目录（路径），将索引为1的视为文件名，
                     # print(os.path.split(remotefile)[0])
@@ -97,6 +110,8 @@ def upload(local_dir,remotedir):
         print('upload file success %s ' % datetime.datetime.now())
         t.close()
         mb.showinfo('恭喜您', '上传成功')
+        mb.showinfo('上传封装平台后里面的aWork的MD5值为','md5值：'+ result[0])
+
     except Exception as e:
         print('连接失败，尝试Ping一下封装平台\n')
         print(88, e)
