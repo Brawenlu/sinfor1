@@ -159,6 +159,29 @@ class Create(ldapguihao.MyFrame1):
             res = requests.post(url=url,data=data,headers=headers,verify=False)
             # print(res.content)
             self.m_textCtrl6.SetValue(res.json()['message'])
+
+            urlupdate = 'https://{}:{}/cgi-bin/php-cgi/html/delegatemodule/HttpHandler.php?controler=Updater&action=Update&token={}'.format(
+                ip, port, tooken)
+            headers2 = {
+                'Accept': '*/*',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Accept-Language': 'zh-CN,zh;q=0.9',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Sec-Fetch-Mode': 'cors',
+                'Connection': 'keep-alive',
+                'Content-Length': '29',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Cookie': 'language=zh_CN; PHPSESSID={0}; x-act-flag-gcs=; AlarmLogTime=%222018-07-18%2014%3A30%3A59%22; sinfor_session_id={1}; x-anti-csrf-gcs=89E91B7000692F33'.format(
+                    PHPSESSID, sinfor_session_id),
+                'Host': '%s:%s' % (ip, port),
+                'Origin': 'https://{}:{}'.format(ip, port),
+                'Referer': 'https://{}:{}/cgi-bin/login.cgi?requestname=7&cmd=0'.format(ip, port),
+                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.75 Safari/537.36',
+            }
+
+            data2 = {'isNeedCheckCommunication': 'true'}
+            res2 = requests.post(url=urlupdate, headers=headers2, data=data2, verify=False)
+            # print(res2.json())
             # print(res.json()['message'])
             # print(type(res.content))
         Ldapadd(ip,port,login(ip,user,pwd,getsession(ip,port),port))
