@@ -12,7 +12,7 @@ import http.cookiejar,ldapguihao
 class Create(ldapguihao.MyFrame1):
     def __init__(self,parent):
         ldapguihao.MyFrame1.__init__(self,parent)
-        self.m_textCtrl8.SetValue('/默认用户组')
+        # self.m_textCtrl8.SetValue('/默认用户组')
         # self.m_textCtrl4.SetValue('输入单号')
         # ip = '10.242.1.170'
         # port = '4430'
@@ -24,8 +24,8 @@ class Create(ldapguihao.MyFrame1):
     def click(self, event):
         ip=self.m_textCtrl1.GetValue()
         port='4430'
-        user = self.m_textCtrl2.GetValue()
-        pwd = self.m_textCtrl3.GetValue()
+        user = self.m_textCtrl3.GetValue()
+        pwd = self.m_textCtrl4.GetValue()
         def getsession(ip,port):
             url = "https://{}:{}/cgi-bin/login.cgi?requestname=2&cmd=0".format(ip,port)
             res = requests.get(url=url,verify=False)
@@ -126,7 +126,7 @@ class Create(ldapguihao.MyFrame1):
                    "charset":'GBK',
                    'portsStr':'389',
                    'hostsStr':'["10.242.255.72"]',
-                   'name':self.m_textCtrl4.GetValue(),
+                   'name':self.m_textCtrl7.GetValue(),
                    'note':'',
                    'args':'',
                    'l_admin':'Administrator@sslt.com',
@@ -147,7 +147,7 @@ class Create(ldapguihao.MyFrame1):
                    'ladpKeyTypeForSha1_word': '0',
                    'is_enable_role_map': '1',
                    'grpid': '-1',
-                   'grpid_': self.m_textCtrl8.GetValue(),
+                   'grpid_': '/默认用户组',
                    'r_mobileid': '',
                    'r_ipid': '',
                    'r_ipmaskid': '',
@@ -158,7 +158,7 @@ class Create(ldapguihao.MyFrame1):
                    }
             res = requests.post(url=url,data=data,headers=headers,verify=False)
             # print(res.content)
-            self.m_textCtrl7.SetValue(res.json()['message'])
+            self.m_textCtrl6.SetValue(res.json()['message'])
             # print(res.json()['message'])
             # print(type(res.content))
         Ldapadd(ip,port,login(ip,user,pwd,getsession(ip,port),port))
