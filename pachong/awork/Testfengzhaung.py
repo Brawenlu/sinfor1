@@ -38,27 +38,15 @@ def upload(local_file,remote_dir):
         list2 = stdout.readlines()
         print(list2)
         print('上传记录为'+local_file,remote_dir)
-        try:
-            sftp.put(local_file, remote_dir)
-            print('上传文件' + yasuobao + '成功')
-            try :
-                stdin2, stdout2, stderr2 = ssh.exec_command('chmod 777 {}'.format(remote_dir))
-                list4 = stdout2.readlines()
-                print(list4)
-                stdin, stdout, stderr = ssh.exec_command('tar zxvf {} -C /emm/custom'.format(remote_dir))
-                list3 = stdout.readlines()
-                print(list3)
-            except Exception as a:
-                print("压缩命令错误")
-            try:
-                stdin, stdout, stderr = ssh.exec_command('rm -f /emm/custom/{}'.format(yasuobao))
-                list4 = stdout.readlines()
-                print(list4)
-                print("删除文件成功")
-            except Exception as c:
-                print('删除命令失败')
-        except Exception as e:
-            print('上传文件' + yasuobao + '失败')
+        try :
+            # stdin, stdout, stderr = ssh.exec_command('cd /emm/custom/')
+            stdin, stdout, stderr = ssh.exec_command('tar zxvf {} -C /emm/custom'.format(remote_dir))
+            # stdin, stdout, stderr = ssh.exec_command('sangfor@123')
+            list3 = stdout.readlines()
+            print(list3)
+        except Exception as a:
+            print("压缩命令错误")
+
     except Exception as e:
         print('连接失败，尝试Ping一下封装平台\n')
         print(88, e)
