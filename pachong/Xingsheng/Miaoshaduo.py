@@ -13,7 +13,10 @@ import time
 import json
 import threading
 import queue as Queue
+from openpyxl.workbook import Workbook
+# import Workbook
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
 import io
 import sys
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='gb18030')
@@ -83,11 +86,20 @@ USER_INFO = {
     },
     '陆文博': {
         'userkey': 'ce52d965-7b79-47c7-8fdd-ee5c74e349ae'
+    },
+    '朱勇': {
+        'userkey': '3a071947-5a94-4c66-ae36-ea3134a63d1f'
+    },
+    '蒋宗涛': {
+        'userkey': '2171051f-e783-4efa-91a2-8cc30aa2d058'
     }
+
+
+
 }
 now_data = time.strftime("%Y-%m-%d", time.localtime(int(time.time())))
 # START_TIME = str(input("请在下方输入您需要秒杀的时间 例如'{} 10:00:00'\n".format(now_data))).strip()
-START_TIME = '{} 11:52:00'.format(now_data)
+START_TIME = '{} 20:21:00'.format(now_data)
 DIFF_TIME = 5  # 本机与北京时间的最大时间差 单位：秒,值如果小于真实时间差，可能导致秒杀不到商品
 
 
@@ -505,7 +517,10 @@ class Order(object):
 def main():
     # 批量设置用户，对应购买的商品，默认秒杀时间=当天的早上十点--所有用户必须是湖南区域，如果不是 需要在每个线程去获取真实的秒杀时间
     user_dict = {
-        '陆文博&0.75': ["卡帝乐鳄鱼 防螨床垫保护垫 180X200cm/床"],
+        '陆文博&0.75': ["银润得 和盛去骨鸡腿肉【批发装】1600g/份"],
+        '朱勇&0.76': ["银润得 和盛去骨鸡腿肉【批发装】1600g/份"],
+        '蒋宗涛&0.77': ["银润得 和盛去骨鸡腿肉【批发装】1600g/份"]
+
         # '彭敏&0.72': ["海信 液晶电视 1台 65寸 195W"],
         # '彭敏小号&0.8': ["海信 液晶电视 1台 65寸 195W"]
         # '彭敏小号&0.77': ["Apple iPhone11手机 1台 128GB 黄色 双卡双待"],
