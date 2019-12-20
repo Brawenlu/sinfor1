@@ -5,10 +5,11 @@
 # @File    : Fengzhuang.py
 # @Software: Sinfor
 import paramiko
-import datetime
+import datetime,sys,time
 import os,re
 import tkinter as tk
 import tkinter
+
 from tkinter import filedialog
 import tkinter.messagebox as mb
 
@@ -38,6 +39,26 @@ def upload(local_file,remote_dir):
         list2 = stdout.readlines()
         print(list2)
         print('上传记录为'+local_file,remote_dir)
+        try :
+            sftp.stat(remotedir)
+            # print('1')
+            print('单号已存在')
+            # mb.showinfo('提示', '定制单号已存在,点击继续')
+            stdin, stdout, stderr = ssh.exec_command(
+                'sudo mv /var/www/sangfor/default/awork/{} /var/www/sangfor/default/awork/{}bak{}'.format(danhao,
+                                                                                                          danhao,
+                                                                                                          suijishu))
+            list3 = stdout.readlines()
+            print(list3)
+            print('旧的定制单号已备份')
+            time.sleep(5)
+        except:
+            print('之前没有定制单号')
+
+
+
+
+
         try:
             sftp.put(local_file, remote_dir)
             print('上传文件' + yasuobao + '成功')
@@ -68,6 +89,7 @@ if __name__=='__main__':
     root = tk.Tk()
     root.withdraw()
     remote_dir = '/emm/custom'
+    localdanhao = sys.argv[1]
     local_file=r'D:\SSLPK-WRAP-IMPROVE-SJJ-20190219011.zip'
     upload(local_file, remote_dir)
     # file_path = sys.argv[1]

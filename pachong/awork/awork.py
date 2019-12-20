@@ -8,6 +8,9 @@ import paramiko
 import datetime,sys
 import os,re,time
 import tkinter as tk
+import random
+
+suijishu = random.randint(0, 100)
 import tkinter
 from tkinter import filedialog
 import tkinter.messagebox as mb
@@ -48,7 +51,7 @@ def upload(local_dir,remotedir):
             # print('1')
             print('单号已存在')
             # mb.showinfo('提示', '定制单号已存在,点击继续')
-            stdin, stdout, stderr = ssh.exec_command('sudo mv /var/www/sangfor/default/awork/{} /var/www/sangfor/default/awork/{}bak'.format(danhao,danhao))
+            stdin, stdout, stderr = ssh.exec_command('sudo mv /var/www/sangfor/default/awork/{} /var/www/sangfor/default/awork/{}bak{}'.format(danhao,danhao,suijishu))
             list3 = stdout.readlines()
             print(list3)
             print('旧的定制单号已备份')
@@ -95,9 +98,14 @@ def upload(local_dir,remotedir):
                 remotefile = os.path.join(remotedir,a)
                 print(21,local_file)
                 print(22,remotefile)
+                t3 = paramiko.Transport((hostname, port))
+                t3.connect(username=username, password=password)
+                sftp = paramiko.SFTPClient.from_transport(t3)
+                print('upload file start %s ' % datetime.datetime.now())
+                time.sleep(2)
                 try:
                     sftp.put(local_file,remotefile)
-                    time.sleep(8)
+                    time.sleep(9)
                     print('上传文件'+remotefile+'成功')
                     if 'aWork.ipa' in remotefile.split('/'):
                         stdin, stdout, stderr = ssh.exec_command('md5sum '+remotefile)
