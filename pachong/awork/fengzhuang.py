@@ -5,7 +5,7 @@
 # @File    : Fengzhuang.py
 # @Software: Sinfor
 import paramiko
-import datetime,sys,time
+import datetime,sys,time,random
 import os,re
 import tkinter as tk
 import tkinter
@@ -19,6 +19,8 @@ username='sangfor'
 password='sangfor@123'
 port=22
 
+suijishu = random.randint(0, 100)
+localfile1=r'\\199.200.0.3\临时文件夹\应用封装'
 def upload(local_file,remote_dir):
     try:
         #连接linux
@@ -32,6 +34,8 @@ def upload(local_file,remote_dir):
         remote_dir = remote_dir+'/'+yasuobao
         print('单号以及远程目录为：'+yasuobao,remote_dir)
 
+        danhao = yasuobao.split('.')[0]
+        print('单号为:'+danhao)
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(hostname, port, username, password)
@@ -39,15 +43,16 @@ def upload(local_file,remote_dir):
         list2 = stdout.readlines()
         print(list2)
         print('上传记录为'+local_file,remote_dir)
+        chongfu = remote_dir.split('.')[0]
+        print(chongfu)
+
         try :
-            sftp.stat(remotedir)
+            sftp.stat(chongfu)
             # print('1')
             print('单号已存在')
             # mb.showinfo('提示', '定制单号已存在,点击继续')
-            stdin, stdout, stderr = ssh.exec_command(
-                'sudo mv /var/www/sangfor/default/awork/{} /var/www/sangfor/default/awork/{}bak{}'.format(danhao,
-                                                                                                          danhao,
-                                                                                                          suijishu))
+            stdin, stdout, stderr = ssh.exec_command('mv /emm/custom/{} /emm/custom/{}bak{}'.format(danhao,danhao,suijishu))
+            print('输入完成')
             list3 = stdout.readlines()
             print(list3)
             print('旧的定制单号已备份')
@@ -56,11 +61,9 @@ def upload(local_file,remote_dir):
             print('之前没有定制单号')
 
 
-
-
-
         try:
             sftp.put(local_file, remote_dir)
+            time.sleep(5)
             print('上传文件' + yasuobao + '成功')
             try :
                 stdin2, stdout2, stderr2 = ssh.exec_command('chmod 777 {}'.format(remote_dir))
@@ -90,7 +93,8 @@ if __name__=='__main__':
     root.withdraw()
     remote_dir = '/emm/custom'
     localdanhao = sys.argv[1]
-    local_file=r'D:\SSLPK-WRAP-IMPROVE-SJJ-20190219011.zip'
+    # local_file=r'D:\SSL-2019030408.zip'
+    local_file = localfile1 + '\\' + localdanhao
     upload(local_file, remote_dir)
     # file_path = sys.argv[1]
     # local_dir = filedialog.askdirectory()
