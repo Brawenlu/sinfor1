@@ -12,10 +12,10 @@ import time
 import json
 import threading
 import queue as Queue
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from hyper.contrib import HTTP20Adapter
 
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 event = threading.Event()
 
@@ -90,18 +90,21 @@ USER_INFO = {
     '罗峥': {
         'userkey': '81f26266-9d5b-425a-89f4-8c8ff171b403'
     },
-    '铭哥': {
-        'userkey': '4be76516-6c91-48de-9d3a-2e47384e0eac'
+    '陆文博小号': {
+        'userkey': '7f836e5c-33a3-4536-bfa8-893f554754bc'
     },
-    '麦子': {
-        'userkey': '05b69ba9-d8ae-42f4-9229-fa4a19c8b74a'
-    }
+    '朱勇': {
+        'userkey': 'd3475d93-51a8-4ebf-819f-2372cca11a3c'
+    } ,
+    '蒋宗涛': {
+        'userkey': '2171051f-e783-4efa-91a2-8cc30aa2d058'
+    },
 }
 
 now_data = time.strftime("%Y-%m-%d", time.localtime(int(time.time())))
 # START_TIME = str(input("请在下方输入您需要秒杀的时间 例如'{} 10:00:00'\n".format(now_data))).strip()
-START_TIME = '{} 10:00:00'.format(now_data)
-DIFF_TIME = 9  # 本机与北京时间的最大时间差 单位：秒,值如果小于真实时间差，可能导致秒杀不到商品
+START_TIME = '{} 10:30:00'.format(now_data)
+DIFF_TIME = 2  # 本机与北京时间的最大时间差 单位：秒,值如果小于真实时间差，可能导致秒杀不到商品
 
 
 def myprint(*con):
@@ -573,7 +576,10 @@ class Order(object):
 def main():
     # 批量设置用户，对应购买的商品，默认秒杀时间=当天的早上十点--所有用户必须是湖南区域，如果不是 需要在每个线程去获取真实的秒杀时间
     user_dict = {
-        '陆文博&0.7': [""],
+        '蒋宗涛&0.7': [''],
+        '陆文博&0.7': [''],
+        # '陆文博小号&0.8': ['烽味 古铜方形宫廷酒精炉 1个 19X19X9cm','旺迪 家庭胶带特惠装 1盒 胶带14卷十剪刀1把','布艺工坊 韩版可爱防污袖套 2双/份 33X18cm 颜色随机','客家谣 4.6英寸直口碗 4个/份 直径约11.8cm 高5.8cm'],
+        # '朱勇&0.9': ['烽味 古铜方形宫廷酒精炉 1个 19X19X9cm','旺迪 家庭胶带特惠装 1盒 胶带14卷十剪刀1把','布艺工坊 韩版可爱防污袖套 2双/份 33X18cm 颜色随机','客家谣 4.6英寸直口碗 4个/份 直径约11.8cm 高5.8cm']
         # '罗峥&0.71': ["Apple ipad 1台 金色 128G WIFI版"],
         # '铭哥&0.72': ["Apple ipad 1台 金色 128G WIFI版"],
         # '麦子&0.725': ["Apple ipad 1台 金色 128G WIFI版"],
