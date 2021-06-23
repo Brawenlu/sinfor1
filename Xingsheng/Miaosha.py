@@ -86,6 +86,7 @@ class User():
         self.userkey = USERKEY.get(self.username).get('userkey')
         self.wechatinfor = self.get_user_inof()
         self.storeinfor = self.get_storeinfo_by_storid(self.wechatinfor['currentStoreId'])
+        self.sku_list = self.col_all_sku()
         # 实例化方法用来直接调用
 
     def get_user_inof(self):
@@ -141,7 +142,7 @@ class User():
         return weixinginfo
 
     def get_storeinfo_by_storid(self,store_id):
-        # 通过store_id来获取store的相关信息
+        # 通过store_id来获取store的相关信息,自提点信息等
         url = 'https://mall-store.xsyxsc.com/mall-store/store/getStoreInfo'
         # url = "https://mall-store.xsyxsc.com/mall-store/store/getStoreInfo"
         headers = {"Host":"mall-store.xsyxsc.com",
@@ -175,10 +176,20 @@ class User():
         printkaishi("根据store_id:{}获取到的自提点名称为:{}".format(store_id,store_info['storeName']))
         return store_info
 
+    def col_all_sku(self):
+        sku = Skuinfo(userkey=self.userkey,store_info=self.storeinfor)
+        return sku
+
+
+class Skuinfo():
+    def __init__(self,userkey,store_info):
+        self.userkey = userkey
+        self.store_infor = store_info
+        print(self.userkey,self.store_infor)
 
 
 
-        # print(userres.text
+
 
 
 if __name__ == '__main__':
