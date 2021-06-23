@@ -8,7 +8,7 @@ import datetime
 #打印当前时间
 # now_time = datetime.datetime.now().replace(second=0)
 # now_data = time.strftime("%Y-%m-%d", time.localtime(int(time.time())))
-import requests
+import requests,json
 
 now_time = time.strftime("%Y-%m-%d")
 # print(now_time)
@@ -17,6 +17,7 @@ now_time = time.strftime("%Y-%m-%d")
 #自定义秒杀时间
 miaosha_time = '{} 09:00:00'.format(now_time)
 print(miaosha_time)
+
 # print(strtime_to_timestamp(miaosha_time))
 # print(miaosha_time-int(time.time()))
 #设置打印日志输出，定义一个可变元祖的函数
@@ -79,6 +80,7 @@ USERKEY = {"陆文博":{'userkey':"45ceb70c-09fa-4b59-871b-fa285bc36b4d"},
 
 class User():
     def __init__(self,username,sleeptime):
+        self.session = requests.session()
         self.username = username
         self.sleeptime = sleeptime
         self.userkey = USERKEY.get(self.username).get('userkey')
@@ -156,7 +158,22 @@ class User():
                    "Accept-Encoding":"gzip, deflate, br"
                    }
         body = {"userKey":self.userkey,"storeId":store_id}
-        print(body)
+        # print(body)
+        res = self.session.post(url=url, data=body, verify=False, headers=headers).json()['data']
+        # res = json.dumps(res,ensure_ascii=False, sort_keys=True,indent=2)
+        # print(type(res))
+        store_info = {"storeId":res['storeId'],
+                      "storeCode":res['storeCode'],
+                      "areaId":res['areaId'],
+                      "areaName":res['areaName'],
+                      "storeName":res['storeName'],
+                      "detailAddress":res['detailAddress'],
+                      "contactsTel":res['contactsTel'],
+                      "wechatGroupName":res['wechatGroupName'],
+                     }
+        print(store_info)
+        printkaishi("根据store_id:{}获取到的自提点名称为:{}".format(store_id,store_info['storeName']))
+        return store_info
 
 
 
