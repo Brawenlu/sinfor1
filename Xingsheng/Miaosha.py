@@ -9,7 +9,11 @@ import datetime
 # now_time = datetime.datetime.now().replace(second=0)
 # now_data = time.strftime("%Y-%m-%d", time.localtime(int(time.time())))
 import requests,json
-
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  #移除SSL警告标签
+from hyper.contrib import HTTP20Adapter
+session = requests.session()
+# session.mount("https://", HTTP20Adapter())
 now_time = time.strftime("%Y-%m-%d")
 # print(now_time)
 # print(time.localtime(int(time.time())))
@@ -80,7 +84,7 @@ USERKEY = {"陆文博":{'userkey':"45ceb70c-09fa-4b59-871b-fa285bc36b4d"},
 
 class User():
     def __init__(self,username,sleeptime):
-        self.session = requests.session()
+
         self.username = username
         self.sleeptime = sleeptime
         self.userkey = USERKEY.get(self.username).get('userkey')
@@ -90,7 +94,7 @@ class User():
         # 实例化方法用来直接调用
 
     def get_user_inof(self):
-        # 通过userkey获取用户的相关信息
+        # 通过userkey获取用户的相关信息,类中的方法调用不用传参，类外面的要传参
         url = 'https://user.xsyxsc.com/api/member/user/getUserInfo'
         # headers = {}
         # url = "https://user.xsyxsc.com/api/member/user/getUserInfo"
@@ -160,7 +164,7 @@ class User():
                    }
         body = {"userKey":self.userkey,"storeId":store_id}
         # print(body)
-        res = self.session.post(url=url, data=body, verify=False, headers=headers).json()['data']
+        res = session.post(url=url, data=body, verify=False, headers=headers).json()['data']
         # res = json.dumps(res,ensure_ascii=False, sort_keys=True,indent=2)
         # print(type(res))
         store_info = {"storeId":res['storeId'],
@@ -182,10 +186,53 @@ class User():
 
 
 class Skuinfo():
+    #获得商品信息类
     def __init__(self,userkey,store_info):
         self.userkey = userkey
         self.store_infor = store_info
         print(self.userkey,self.store_infor)
+        self.url = 'https://mall.xsyxsc.com'
+        self.loadproducet_sku = self.get_windows_id()
+
+    def get_windows_id(self):
+        """根据首页的id来获取首页商品信息id"""
+        headers = {"Host":"mall.xsyxsc.com",
+                   "Connection": "keep-alive",
+                   "Content-Length": "98",
+                   "Accept":"application/json, text/plain, */*",
+                   "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36 MicroMessenger/7.0.9.501 NetType/WIFI MiniProgramEnv/Windows WindowsWechat",
+                   "content-type": "application/x-www-form-urlencoded",
+                   "preBuy": "true",
+                   "source": "applet",
+                   "userKey": self.userkey,
+                   "version": "1.12.11",
+                   "Referer": "https://servicewechat.com/wx6025c5470c3cb50c/336/page-frame.html",
+                   "Accept-Encoding": "gzip, deflate, br"}
+        body = {"userKey":self.userkey,
+                "storeId":self.store_infor['storeId'],
+                "areaId":self.store_infor['areaId'],
+                "openBrandHouse":"OPEN"}
+        index_windowsinfor = {}
+        # /user/product/indexSortWindows  老接口
+        resp = session.post(url=self.url+"/user/product/indexWindows",data=body,headers=headers,verify=False).json()['data']
+        print(resp)
+        """找个接口返回了activityWindows、brandHouseWindows、classifyWindows,老街口是windows"""
+        for window in resp['activityWindows']:  #便利列表
+            """只搜索秒杀类的商品"""
+            print(type(resp['activityWindows']))  #由字典组成的列表
+            print(type(window)) #每个字典
+            print(window)
+            printkaishi("搜索到标题为'{}',windows_id为'{}',类型为'{}'".format(window['windowName'],window['windowId'],window['windowType']))
+            index_windowsinfor[str(window['windowId'])+'&'+window['windowType']] = window['windowName']
+        print(index_windowsinfor)
+        printkaishi("累计搜到的activityWindows个数为{}".format(len(index_windowsinfor)))
+        return index_windowsinfor
+
+
+
+
+
+
 
 
 
