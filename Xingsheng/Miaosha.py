@@ -193,6 +193,7 @@ class Skuinfo():
         print(self.userkey,self.store_infor)
         self.url = 'https://mall.xsyxsc.com'
         self.loadproducet_sku = self.get_windows_id()
+        self.load_index_sku = self.xiazai_sku_index(**self.get_windows_id())
 
     def get_windows_id(self):
         """根据首页的id来获取首页商品信息id"""
@@ -213,20 +214,36 @@ class Skuinfo():
                 "areaId":self.store_infor['areaId'],
                 "openBrandHouse":"OPEN"}
         index_windowsinfor = {}
-        # /user/product/indexSortWindows  老接口
-        resp = session.post(url=self.url+"/user/product/indexWindows",data=body,headers=headers,verify=False).json()['data']
+        # /user/product/indexSortWindows  老接口  新街口/user/product/Windows 用老接口数据多
+        resp = session.post(url=self.url+"/user/product/indexSortWindows",data=body,headers=headers,verify=False).json()['data']
         print(resp)
         """找个接口返回了activityWindows、brandHouseWindows、classifyWindows,老街口是windows"""
-        for window in resp['activityWindows']:  #便利列表
-            """只搜索秒杀类的商品"""
-            print(type(resp['activityWindows']))  #由字典组成的列表
-            print(type(window)) #每个字典
-            print(window)
+        for window in resp['windows']:  #便利列表
+            """只搜索windows类的商品"""
+            # print(type(resp['windows']))  #由字典组成的列表
+            # print(type(window)) #每个字典
+            # print(window)
             printkaishi("搜索到标题为'{}',windows_id为'{}',类型为'{}'".format(window['windowName'],window['windowId'],window['windowType']))
             index_windowsinfor[str(window['windowId'])+'&'+window['windowType']] = window['windowName']
-        print(index_windowsinfor)
+        # for window_1 in resp['classifyWindows']:
+        #     """只搜索classifyWindows类的商品"""
+        #     index_windowsinfor[str(window_1['windowId'])+'&'+window_1['windowType']] = window_1['windowName']
+        # print(index_windowsinfor)
         printkaishi("累计搜到的activityWindows个数为{}".format(len(index_windowsinfor)))
         return index_windowsinfor
+
+
+    def xiazai_sku_index(self,**awag):
+        """将首页所有信息都存到表中"""
+        print(type(awag))
+        # print(awag)
+        for id_type in awag:
+            window_id,window_type = id_type.split('&')
+            # print(id_type)
+            print(window_id,window_type)
+            if window_type in ['ACTIVITY','CLASSIFY']:
+                url = self.url + ''
+
 
 
 
