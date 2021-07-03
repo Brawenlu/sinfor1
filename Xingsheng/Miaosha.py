@@ -13,7 +13,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  #移除SSL警告标签
 from hyper.contrib import HTTP20Adapter
 session = requests.session()
-# session.mount("https://", HTTP20Adapter())
+session.mount("https://mall.xsyxsc.com", HTTP20Adapter())  #使用http2.0的请求，来模拟headers里面带有:,报文格式不一样
 now_time = time.strftime("%Y-%m-%d")
 # print(now_time)
 # print(time.localtime(int(time.time())))
@@ -141,7 +141,7 @@ class User():
                         'currentStoreId':userinfo['currentStoreId'],
                         'tmRegistry':userinfo['tmRegistry']
                         }
-        print(weixinginfo)
+        # print(weixinginfo)
         printkaishi("根据{},获取到的用户为:{}".format(self.userkey,weixinginfo['wechatNickName']))
         return weixinginfo
 
@@ -167,6 +167,7 @@ class User():
         res = session.post(url=url, data=body, verify=False, headers=headers).json()['data']
         # res = json.dumps(res,ensure_ascii=False, sort_keys=True,indent=2)
         # print(type(res))
+        # print(res)
         store_info = {"storeId":res['storeId'],
                       "storeCode":res['storeCode'],
                       "areaId":res['areaId'],
@@ -175,8 +176,11 @@ class User():
                       "detailAddress":res['detailAddress'],
                       "contactsTel":res['contactsTel'],
                       "wechatGroupName":res['wechatGroupName'],
+                      "provinceId":res['provinceId'],
+                      "countyId":res['countyId'],
+                      "cityId":res['cityId']
                      }
-        print(store_info)
+        # print(store_info)
         printkaishi("根据store_id:{}获取到的自提点名称为:{}".format(store_id,store_info['storeName']))
         return store_info
 
@@ -192,7 +196,7 @@ class Skuinfo():
         self.store_infor = store_info
         print(self.userkey,self.store_infor)
         self.url = 'https://mall.xsyxsc.com'
-        self.loadproducet_sku = self.get_windows_id()
+        # self.loadproducet_sku = self.get_windows_id()
         self.load_index_sku = self.xiazai_sku_index(**self.get_windows_id())
 
     def get_windows_id(self):
@@ -216,7 +220,7 @@ class Skuinfo():
         index_windowsinfor = {}
         # /user/product/indexSortWindows  老接口  新街口/user/product/Windows 用老接口数据多
         resp = session.post(url=self.url+"/user/product/indexSortWindows",data=body,headers=headers,verify=False).json()['data']
-        print(resp)
+        # print(resp)
         """找个接口返回了activityWindows、brandHouseWindows、classifyWindows,老街口是windows"""
         for window in resp['windows']:  #便利列表
             """只搜索windows类的商品"""
@@ -235,17 +239,57 @@ class Skuinfo():
 
     def xiazai_sku_index(self,**awag):
         """将首页所有信息都存到表中"""
-        print(type(awag))
-        # print(awag)
+        # print(type(awag))
+        print(awag)
+        now = time.time()  #获得时间戳
+        api_timestamp = round(now*1000)   #13位再四舍五入舍弃.后面的
+        # print(now*1000)
+        # print(api_timestamp)
         for id_type in awag:
             window_id,window_type = id_type.split('&')
             # print(id_type)
-            print(window_id,window_type)
-            if window_type in ['ACTIVITY','CLASSIFY']:
-                url = self.url + ''
+            # print(window_id,window_type)
+            # if window_type in ['ACTIVITY','CLASSIFY']:
+            #     url = self.url + ''
+        url = self.url+'/user/product/getConfigWindowProducts'
+        headers = {":method":"POST",
+                   ":scheme":"https",
+                   ":path":"/user/product/getConfigWindowProducts",
+                   ":authority":"mall.xsyxsc.com",
+                   "content-type":"application/json",
+                   "accept":"application/json, text/plain, */*",
+                   "version":"1.12.15",
+                   "userkey":self.userkey,
+                   "api-version":"V3",
+                   "source":"applet",
+                   "accept-language":"zh-cn",
+                   "accept-encoding":"gzip, deflate, br",
+                   "api-sign":"88bc16010de349b6cc6b37b1d0ae195e",
+                   "clienttype":"MINI_PROGRAM",
+                   "user-agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 14_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.1(0x1800012a) NetType/WIFI Language/zh_CN",
+                   "prebuy": "true",
+                   "api-timestamp": str(api_timestamp),
+                   "referer": "https://servicewechat.com/wx6025c5470c3cb50c/341/page-frame.html",
+                   "content-length": "261",
+                   }
+        body = {'clientType':'MINI_PROGRAM',
+                'userKey':self.userkey,
+                'areaId':self.store_infor['areaId'],
+                'storeId':self.store_infor['storeId'],
+                'provinceCode':self.store_infor['provinceId'],
+                'cityCode':self.store_infor['cityId'],
+                'areaCode':self.store_infor['countyId'],
+                'saleRegionCode':self.store_infor['areaId'],
+                'channelUse':'WXAPP',
+                'requireCoupon':'TRUE',
+                'userScopeTypes':["NORMAL"],
+               }
+        res = session.post(url=url,data=body,headers=headers,verify=False)
+        print(res.text)
 
 
 
+    # def
 
 
 
