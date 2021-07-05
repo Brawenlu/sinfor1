@@ -200,7 +200,7 @@ class Skuinfo():
         self.load_index_sku = self.xiazai_sku_index(**self.get_windows_id())
 
     def get_windows_id(self):
-        """根据首页的id来获取首页商品信息id"""
+        """根据首页的id来获取首页商品信息id,"""
         headers = {"Host":"mall.xsyxsc.com",
                    "Connection": "keep-alive",
                    "Content-Length": "98",
